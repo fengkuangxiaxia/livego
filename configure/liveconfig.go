@@ -7,7 +7,6 @@ import (
 
 	"github.com/kr/pretty"
 	log "github.com/sirupsen/logrus"
-	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
@@ -100,21 +99,6 @@ func init() {
 	viper.SetConfigType("json")
 	viper.ReadConfig(defaultConfig)
 	Config.MergeConfigMap(viper.AllSettings())
-
-	// Flags
-	pflag.String("rtmp_addr", ":1935", "RTMP server listen address")
-	pflag.String("httpflv_addr", ":7001", "HTTP-FLV server listen address")
-	pflag.String("hls_addr", ":7002", "HLS server listen address")
-	pflag.String("api_addr", ":8090", "HTTP manage interface server listen address")
-	pflag.String("config_file", "livego.yaml", "configure filename")
-	pflag.String("level", "info", "Log level")
-	pflag.Bool("hls_keep_after_end", false, "Maintains the HLS after the stream ends")
-	pflag.String("flv_dir", "tmp", "output flv file at flvDir/APP/KEY_TIME.flv")
-	pflag.Int("read_timeout", 10, "read time out")
-	pflag.Int("write_timeout", 10, "write time out")
-	pflag.Int("gop_num", 1, "gop num")
-	pflag.Parse()
-	Config.BindPFlags(pflag.CommandLine)
 
 	// File
 	Config.SetConfigFile(Config.GetString("config_file"))

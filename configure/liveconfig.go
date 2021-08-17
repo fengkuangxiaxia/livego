@@ -39,30 +39,30 @@ type JWT struct {
 	Algorithm string `mapstructure:"algorithm"`
 }
 type ServerCfg struct {
-	Level           string       `mapstructure:"level"`
-	ConfigFile      string       `mapstructure:"config_file"`
-	FLVArchive      bool         `mapstructure:"flv_archive"`
-	FLVDir          string       `mapstructure:"flv_dir"`
-	RTMPNoAuth      bool         `mapstructure:"rtmp_noauth"`
-	RTMPAddr        string       `mapstructure:"rtmp_addr"`
-	HTTPFLVAddr     string       `mapstructure:"httpflv_addr"`
-	HLSAddr         string       `mapstructure:"hls_addr"`
-	HLSKeepAfterEnd bool         `mapstructure:"hls_keep_after_end"`
-	APIAddr         string       `mapstructure:"api_addr"`
-	RedisAddr       string       `mapstructure:"redis_addr"`
-	RedisPwd        string       `mapstructure:"redis_pwd"`
-	ReadTimeout     int          `mapstructure:"read_timeout"`
-	WriteTimeout    int          `mapstructure:"write_timeout"`
-	GopNum          int          `mapstructure:"gop_num"`
-	JWT             JWT          `mapstructure:"jwt"`
-	Server          Applications `mapstructure:"server"`
+	Level           string       `mapstructure:"level" json:"level"`
+	ConfigFile      string       `mapstructure:"config_file" json:"config_file"`
+	FLVArchive      bool         `mapstructure:"flv_archive" json:"flv_archive"`
+	FLVDir          string       `mapstructure:"flv_dir" json:"flv_dir"`
+	RTMPNoAuth      bool         `mapstructure:"rtmp_noauth" json:"rtmp_no_auth"`
+	RTMPAddr        string       `mapstructure:"rtmp_addr" json:"rtmp_addr"`
+	HTTPFLVAddr     string       `mapstructure:"httpflv_addr" json:"httpflv_addr"`
+	HLSAddr         string       `mapstructure:"hls_addr" json:"hls_addr"`
+	HLSKeepAfterEnd bool         `mapstructure:"hls_keep_after_end" json:"hls_keep_after_end"`
+	APIAddr         string       `mapstructure:"api_addr" json:"api_addr"`
+	RedisAddr       string       `mapstructure:"redis_addr" json:"redis_addr"`
+	RedisPwd        string       `mapstructure:"redis_pwd" json:"redis_pwd"`
+	ReadTimeout     int          `mapstructure:"read_timeout" json:"read_timeout"`
+	WriteTimeout    int          `mapstructure:"write_timeout" json:"write_timeout"`
+	GopNum          int          `mapstructure:"gop_num" json:"gop_num"`
+	JWT             JWT          `mapstructure:"jwt" json:"jwt"`
+	Server          Applications `mapstructure:"server" json:"server"`
 }
 
 // default config
 var defaultConf = ServerCfg{
 	ConfigFile:      "livego.yaml",
-	FLVArchive:	false,
-	RTMPNoAuth:	false,
+	FLVArchive:      false,
+	RTMPNoAuth:      false,
 	RTMPAddr:        ":1935",
 	HTTPFLVAddr:     ":7001",
 	HLSAddr:         ":7002",
@@ -124,6 +124,22 @@ func init() {
 	c := ServerCfg{}
 	Config.Unmarshal(&c)
 	log.Debugf("Current configurations: \n%# v", pretty.Formatter(c))
+}
+
+func SetConfig(config ServerCfg) (err error) {
+	b, _ := json.Marshal(config)
+	defaultConfig := bytes.NewReader(b)
+	viper.SetConfigType("json")
+	err = viper.ReadConfig(defaultConfig)
+	if err != nil {
+		return err
+	}
+	err = Config.MergeConfigMap(viper.AllSettings())
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func CheckAppName(appname string) bool {

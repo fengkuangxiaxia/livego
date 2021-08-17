@@ -3,13 +3,13 @@ package hls
 import (
 	"bytes"
 	"fmt"
-	"github.com/gwuhaolin/livego/configure"
+	"github.com/fengkuangxiaxia/livego/configure"
 	"time"
 
-	"github.com/gwuhaolin/livego/av"
-	"github.com/gwuhaolin/livego/container/flv"
-	"github.com/gwuhaolin/livego/container/ts"
-	"github.com/gwuhaolin/livego/parser"
+	"github.com/fengkuangxiaxia/livego/av"
+	"github.com/fengkuangxiaxia/livego/container/flv"
+	"github.com/fengkuangxiaxia/livego/container/ts"
+	"github.com/fengkuangxiaxia/livego/parser"
 
 	log "github.com/sirupsen/logrus"
 )

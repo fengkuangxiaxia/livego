@@ -1,4 +1,4 @@
-module github.com/gwuhaolin/livego
+module github.com/fengkuangxiaxia/livego
 
 go 1.13
 
@@ -11,7 +11,6 @@ require (
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.5.0
-	github.com/spf13/pflag v1.0.3
 	github.com/spf13/viper v1.6.3
 	github.com/stretchr/testify v1.4.0
 	github.com/urfave/negroni v1.0.0 // indirect

@@ -100,17 +100,6 @@ func init() {
 	viper.ReadConfig(defaultConfig)
 	Config.MergeConfigMap(viper.AllSettings())
 
-	// File
-	Config.SetConfigFile(Config.GetString("config_file"))
-	Config.AddConfigPath(".")
-	err := Config.ReadInConfig()
-	if err != nil {
-		log.Warning(err)
-		log.Info("Using default config")
-	} else {
-		Config.MergeInConfig()
-	}
-
 	// Environment
 	replacer := strings.NewReplacer(".", "_")
 	Config.SetEnvKeyReplacer(replacer)

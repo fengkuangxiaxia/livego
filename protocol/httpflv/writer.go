@@ -144,17 +144,21 @@ func (flvWriter *FLVWriter) SendPacket() error {
 			pio.PutI24BE(h[4:7], int32(timestampbase))
 			pio.PutU8(h[7:8], uint8(timestampExt))
 
-			if _, err := flvWriter.ctx.Write(h); err != nil {
-				return err
-			}
+			if flvWriter.ctx != nil {
+				if _, err := flvWriter.ctx.Write(h); err != nil {
+					return err
+				}
 
-			if _, err := flvWriter.ctx.Write(p.Data); err != nil {
-				return err
-			}
+				if _, err := flvWriter.ctx.Write(p.Data); err != nil {
+					return err
+				}
 
-			pio.PutI32BE(h[:4], int32(preDataLen))
-			if _, err := flvWriter.ctx.Write(h[:4]); err != nil {
-				return err
+				pio.PutI32BE(h[:4], int32(preDataLen))
+				if _, err := flvWriter.ctx.Write(h[:4]); err != nil {
+					return err
+				}
+			} else {
+				return fmt.Errorf("flvWriter ctx is nil")
 			}
 		} else {
 			return fmt.Errorf("closed")

@@ -5,6 +5,7 @@ import (
 	"net"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/fengkuangxiaxia/livego/av"
 	"github.com/fengkuangxiaxia/livego/protocol/rtmp"
@@ -116,22 +117,32 @@ func (server *Server) handleConn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 判断视屏流是否发布,如果没有发布,直接返回404
-	msgs := server.getStreams(w, r)
-	if msgs == nil || len(msgs.Publishers) == 0 {
-		http.Error(w, "invalid path", http.StatusNotFound)
-		return
-	} else {
-		include := false
-		for _, item := range msgs.Publishers {
-			if item.Key == path {
-				include = true
-				break
-			}
-		}
-		if include == false {
+	// 判断视屏流是否发布,如果没有发布,则等待30s
+	t := time.NewTimer(30 * time.Second)
+	include := false
+	for {
+		select {
+		case <-t.C:
 			http.Error(w, "invalid path", http.StatusNotFound)
 			return
+		default:
+			msgs := server.getStreams(w, r)
+			if msgs == nil || len(msgs.Publishers) == 0 {
+				// do nothing
+			} else {
+				for _, item := range msgs.Publishers {
+					if item.Key == path {
+						include = true
+						break
+					}
+				}
+			}
+		}
+
+		if include {
+			break
+		} else {
+			time.Sleep(100 * time.Millisecond)
 		}
 	}
 
